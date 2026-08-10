@@ -1,0 +1,658 @@
+<!-- 
+  RIPZCREATOR - AI PRODUCTION STUDIO
+  
+  [INSTRUCTIONS]
+  1. Save as "index.html".
+  2. Open in Chrome/Edge/Safari.
+  3. No server required. App starts at the Login Screen.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RipzCreator | Design Library</title>
+
+<!-- Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+    /* === 1. DESIGN SYSTEM === */
+    :root {
+        --bg-deep: #050507;
+        --bg-panel: rgba(20, 20, 23, 0.75);
+        --bg-surface: #121214;
+        
+        --primary: #7c3aed;       /* Violet */
+        --primary-glow: rgba(124, 58, 237, 0.5);
+        --accent: #06b6d4;        /* Cyan */
+        
+        --text-main: #ffffff;
+        --text-muted: #a1a1aa;
+        
+        --border: rgba(255, 255, 255, 0.08);
+        --glass: blur(20px);
+        --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        
+        /* New Dashboard Colors */
+        --pill-bg: rgba(255,255,255,0.05);
+        --pill-active: #ffffff;
+        --pill-text-active: #000000;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; outline: none; user-select: none; }
+    
+    body {
+        background-color: var(--bg-deep);
+        color: var(--text-main);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* === 2. UTILITY & ANIMATION === */
+    .hidden { display: none !important; }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .justify-center { justify-content: center; }
+    .w-full { width: 100%; }
+    .h-full { height: 100%; }
+    
+    .text-gradient {
+        background: linear-gradient(135deg, #ddd6fe, var(--primary), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeIn 0.6s var(--ease) forwards; }
+    
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+    .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.3; z-index: -1; pointer-events: none; }
+    .orb-1 { width: 500px; height: 500px; background: var(--primary); top: -10%; left: -10%; animation: float 10s ease-in-out infinite; }
+    .orb-2 { width: 400px; height: 400px; background: var(--accent); bottom: 10%; right: 10%; animation: float 12s ease-in-out infinite reverse; }
+
+    /* === 3. COMPONENTS === */
+    .btn {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        color: var(--text-main);
+        padding: 0.7rem 1.4rem;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s var(--ease);
+        display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+    }
+    .btn:hover { background: rgba(255,255,255,0.08); border-color: var(--text-muted); transform: translateY(-1px); }
+    .btn:active { transform: scale(0.98); }
+    
+    .btn-primary {
+        background: var(--primary); border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+    }
+    .btn-primary:hover { background: #6d28d9; box-shadow: 0 0 30px rgba(124, 58, 237, 0.5); }
+
+    .glass-panel {
+        background: var(--bg-panel);
+        backdrop-filter: var(--glass);
+        -webkit-backdrop-filter: var(--glass);
+        border: 1px solid var(--border);
+    }
+
+    .input-box {
+        width: 100%; background: #000; border: 1px solid var(--border);
+        padding: 12px; border-radius: 8px; color: white; margin-bottom: 12px;
+        font-size: 0.9rem; transition: border-color 0.2s;
+    }
+    .input-box:focus { border-color: var(--primary); }
+
+    /* === VIEWS === */
+    
+    /* 1. Login View */
+    #view-login {
+        height: 100%; display: flex; align-items: center; justify-content: center;
+        position: relative;
+    }
+    .login-card {
+        width: 100%; max-width: 420px;
+        padding: 2.5rem; border-radius: 24px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    /* 2. New Dashboard (Inspiration Style) */
+    #view-dashboard { height: 100%; display: flex; flex-direction: column; background: #050507; overflow: hidden; }
+    
+    .dash-nav {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 1.5rem 3rem;
+        background: rgba(5,5,7,0.9); backdrop-filter: blur(10px);
+        position: sticky; top: 0; z-index: 50;
+    }
+    .dash-nav-right { display: flex; gap: 2rem; font-size: 0.9rem; font-weight: 500; color: #888; }
+    .dash-nav-item { cursor: pointer; transition: color 0.2s; }
+    .dash-nav-item:hover { color: #fff; }
+    .beta-tag { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; color: #aaa; }
+
+    .dash-header { padding: 3rem 3rem 1rem 3rem; }
+    .dash-title { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 2rem; color: #fff; }
+    
+    .filter-bar { display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: none; }
+    .filter-pill {
+        padding: 0.6rem 1.5rem; border-radius: 999px;
+        font-size: 0.9rem; font-weight: 500;
+        cursor: pointer; transition: 0.2s;
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #888; background: transparent;
+    }
+    .filter-pill:hover { border-color: #666; color: #fff; }
+    .filter-pill.active { background: #fff; color: #000; border-color: #fff; }
+
+    .gallery-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem; padding: 1rem 3rem 4rem 3rem;
+        overflow-y: auto; flex: 1;
+    }
+    
+    .gallery-card {
+        border-radius: 20px; overflow: hidden;
+        background: #111; border: 1px solid rgba(255,255,255,0.05);
+        transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+        cursor: pointer; position: relative;
+        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+    }
+    .gallery-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px -10px rgba(0,0,0,0.7); border-color: rgba(255,255,255,0.15); }
+    
+    .card-preview { aspect-ratio: 4/3; position: relative; overflow: hidden; }
+    .card-info { padding: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+    .card-title { font-weight: 600; font-size: 1rem; color: #eee; }
+    .card-meta { font-size: 0.8rem; color: #666; }
+
+    /* Mock Designs inside Cards */
+    .mock-light { background: #f4f4f5; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+    .mock-nav { width: 80%; height: 8px; background: #e4e4e7; border-radius: 4px; margin-bottom: 20px; }
+    .mock-hero { width: 60%; height: 20px; background: #18181b; border-radius: 4px; margin-bottom: 10px; }
+    .mock-btn { width: 100px; height: 30px; background: #ef4444; border-radius: 6px; margin-top: 20px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+    
+    .mock-dark { background: #09090b; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .mock-ring { width: 120px; height: 120px; border-radius: 50%; border: 2px solid #8b5cf6; box-shadow: 0 0 40px rgba(139, 92, 246, 0.4); position: relative; }
+    .mock-ring::after { content: ''; position: absolute; inset: -10px; border-radius: 50%; border: 1px solid rgba(6, 182, 212, 0.5); }
+    
+    /* 3. Editor View */
+    #view-editor { height: 100%; display: grid; grid-template-rows: 50px 1fr 280px; grid-template-columns: 280px 1fr 300px; }
+    .top-bar { grid-column: 1 / -1; background: var(--bg-surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1rem; justify-content: space-between; }
+    
+    .panel-left { grid-row: 2; background: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+    .tool-tab { padding: 1rem; border-bottom: 1px solid var(--border); cursor: pointer; color: var(--text-muted); display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+    .tool-tab:hover, .tool-tab.active { background: rgba(255,255,255,0.03); color: var(--text-main); }
+    .tool-tab.active { border-left: 2px solid var(--primary); }
+    
+    .canvas-area { grid-row: 2; background: #000; display: flex; align-items: center; justify-content: center; position: relative; }
+    .video-frame { width: 80%; aspect-ratio: 16/9; background: #111; border: 1px solid #333; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    
+    .panel-right { grid-row: 2; background: var(--bg-surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; transition: transform 0.3s; }
+    .panel-right.collapsed { transform: translateX(100%); margin-left: -300px; }
+    
+    .timeline { grid-row: 3; grid-column: 1 / -1; background: #121214; border-top: 1px solid var(--border); display: flex; flex-direction: column; }
+    .track { height: 60px; display: flex; border-bottom: 1px solid #222; position: relative; }
+    .track-head { width: 100px; background: #18181b; border-right: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #666; }
+    .track-lane { flex: 1; position: relative; background-image: repeating-linear-gradient(90deg, #222 0, #222 1px, transparent 1px, transparent 100px); }
+    .clip { position: absolute; top: 10px; height: 40px; border-radius: 6px; background: #3b82f6; border: 1px solid rgba(255,255,255,0.2); cursor: grab; display: flex; align-items: center; padding: 0 10px; font-size: 0.75rem; }
+    .playhead { position: absolute; top: 0; bottom: 0; left: 300px; width: 2px; background: var(--accent); z-index: 20; pointer-events: none; }
+
+    /* VFX Layers */
+    .vfx-layer { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.3s; }
+    .vfx-aura { box-shadow: inset 0 0 60px 30px rgba(250, 204, 21, 0.4); }
+    .vfx-eyes { background: radial-gradient(circle at 50% 45%, rgba(220, 38, 38, 0.8) 0%, transparent 10%), radial-gradient(circle at 55% 45%, rgba(220, 38, 38, 0.8) 0%, transparent 10%); }
+    
+    /* Toast */
+    #toast { position: fixed; bottom: 20px; right: 20px; background: #fff; color: #000; padding: 12px 20px; border-radius: 8px; font-weight: 600; transform: translateY(100px); transition: 0.3s; z-index: 999; display: flex; align-items: center; gap: 8px; }
+    #toast.show { transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast"><i data-lucide="check-circle" style="color:var(--primary)"></i> <span id="toast-msg">Action Successful</span></div>
+
+<!-- ======================= -->
+<!-- VIEW 1: LOGIN (START) -->
+<!-- ======================= -->
+<div id="view-login" class="animate-in">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="login-card glass-panel">
+        <div class="flex justify-center mb-6">
+            <div style="width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), #4c1d95); border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);">
+                <i data-lucide="aperture" style="width: 32px; height: 32px; color: white;"></i>
+            </div>
+        </div>
+        
+        <div class="text-center mb-8">
+            <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">Ripz<span class="text-gradient">Creator</span></h1>
+            <p style="color: var(--text-muted);">The AI Production Studio for Anime</p>
+        </div>
+
+        <div id="auth-form">
+            <input type="email" id="email" placeholder="Email Address" class="input-box">
+            <input type="password" id="password" placeholder="Password" class="input-box">
+            
+            <div class="flex gap-2 mb-4">
+                <button class="btn w-full" onclick="app.handleAuth('signin')">Sign In</button>
+                <button class="btn btn-primary w-full" onclick="app.handleAuth('signup')">Sign Up</button>
+            </div>
+            
+            <div style="position: relative; text-align: center; margin: 1.5rem 0;">
+                <div style="height: 1px; background: var(--border); position: absolute; top: 50%; left: 0; right: 0;"></div>
+                <span style="background: var(--bg-surface); padding: 0 10px; position: relative; color: var(--text-muted); font-size: 0.8rem;">OR</span>
+            </div>
+
+            <button class="btn w-full" style="background: transparent; border-style: dashed;" onclick="app.handleAuth('guest')">
+                Continue as Guest
+            </button>
+            
+            <p id="login-error" style="color: #ef4444; font-size: 0.85rem; margin-top: 1rem; text-align: center; min-height: 20px;"></p>
+        </div>
+    </div>
+    
+    <div style="position: absolute; bottom: 20px; color: var(--text-muted); font-size: 0.8rem;">
+        v2.4.0 • Secure Firebase Connection
+    </div>
+</div>
+
+<!-- ======================= -->
+<!-- VIEW 2: DASHBOARD (REDESIGNED) -->
+<!-- ======================= -->
+<div id="view-dashboard" class="hidden animate-in">
+    <!-- Top Navigation -->
+    <nav class="dash-nav">
+        <div class="flex items-center gap-2">
+            <span class="beta-tag">BETA</span>
+        </div>
+        <div class="dash-nav-right">
+            <div class="dash-nav-item" style="color:#fff">Dashboard</div>
+            <div class="dash-nav-item">Profile</div>
+            <div class="dash-nav-item" onclick="app.logout()" style="color:#ef4444">Logout</div>
+        </div>
+    </nav>
+
+    <!-- Header & Filters -->
+    <header class="dash-header">
+        <h1 class="dash-title">Your design library.</h1>
+        <div class="filter-bar">
+            <button class="filter-pill active">All</button>
+            <button class="filter-pill">Agency</button>
+            <button class="filter-pill">Ai</button>
+            <button class="filter-pill">Animations</button>
+            <button class="filter-pill">Architecture</button>
+            <button class="filter-pill">Ecommerce</button>
+            <button class="filter-pill">SAAS</button>
+            <button class="filter-pill">Travel</button>
+        </div>
+    </header>
+
+    <!-- Grid Layout -->
+    <div id="project-list" class="gallery-grid">
+        <!-- New Project Card -->
+        <div class="gallery-card" onclick="app.createProject()" style="border-style:dashed; border-color: #333; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #666;">
+            <i data-lucide="plus" style="width: 32px; height: 32px; margin-bottom: 12px;"></i>
+            <span>Start New Project</span>
+        </div>
+
+        <!-- Card 1: Creator (Light) -->
+        <div class="gallery-card" onclick="app.openProject('Startup Promo')">
+            <div class="card-preview">
+                <div class="mock-light">
+                    <div class="mock-nav"></div>
+                    <div class="mock-hero"></div>
+                    <div class="mock-hero" style="width:40%"></div>
+                    <div class="mock-btn"></div>
+                </div>
+            </div>
+            <div class="card-info">
+                <span class="card-title">Creator</span>
+                <i data-lucide="arrow-up-right" style="width: 16px; color: #666;"></i>
+            </div>
+        </div>
+
+        <!-- Card 2: Anime (Dark) -->
+        <div class="gallery-card" onclick="app.openProject('JJK Edit')">
+            <div class="card-preview">
+                <div class="mock-dark">
+                    <div class="mock-ring"></div>
+                </div>
+            </div>
+            <div class="card-info">
+                <span class="card-title">Anime</span>
+                <i data-lucide="arrow-up-right" style="width: 16px; color: #666;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================= -->
+<!-- VIEW 3: EDITOR -->
+<!-- ======================= -->
+<div id="view-editor" class="hidden animate-in">
+    <!-- Header -->
+    <header class="top-bar">
+        <div class="flex items-center gap-4">
+            <button class="btn" style="padding: 6px;" onclick="app.navTo('dashboard')"><i data-lucide="chevron-left"></i></button>
+            <div style="font-weight: 600;" id="project-title-display">Untitled Project</div>
+        </div>
+        <div class="flex gap-2">
+            <button class="btn btn-primary" onclick="app.toast('Project Exported!')">Export</button>
+        </div>
+    </header>
+
+    <!-- Left -->
+    <aside class="panel-left">
+        <div class="tool-tab active" onclick="app.toast('Media Library')"><i data-lucide="film"></i> Media</div>
+        <div class="tool-tab" onclick="app.toast('Audio Library')"><i data-lucide="music"></i> Audio</div>
+        <div class="tool-tab" onclick="app.toast('Text Tools')"><i data-lucide="type"></i> Text</div>
+        <div class="tool-tab" style="color:var(--accent); border-top:1px solid var(--border); margin-top:auto;" onclick="app.toggleAI()">
+            <i data-lucide="sparkles"></i> AI Tools
+        </div>
+        
+        <!-- Asset List -->
+        <div style="padding: 1rem; overflow-y: auto; flex: 1;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div class="btn" style="height: 80px; flex-direction: column; justify-content: center; font-size: 0.7rem; border-style: dashed;">
+                    <i data-lucide="upload"></i> Upload
+                </div>
+                <div class="btn" style="height: 80px; flex-direction: column; justify-content: flex-end; align-items: start; font-size: 0.7rem; background: #222; padding: 8px;">Clip_01.mp4</div>
+                <div class="btn" style="height: 80px; flex-direction: column; justify-content: flex-end; align-items: start; font-size: 0.7rem; background: #222; padding: 8px;">Intro.mov</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Canvas -->
+    <section class="canvas-area">
+        <div class="video-frame">
+            <!-- VFX Layers -->
+            <div id="vfx-aura" class="vfx-layer vfx-aura"></div>
+            <div id="vfx-eyes" class="vfx-layer vfx-eyes"></div>
+            
+            <i data-lucide="play-circle" style="width: 64px; height: 64px; opacity: 0.2;"></i>
+            <div style="position: absolute; bottom: 10px; right: 10px; font-family: monospace; font-size: 0.7rem; color: #888;">1080p • 60FPS</div>
+        </div>
+    </section>
+
+    <!-- Right AI Panel -->
+    <aside class="panel-right" id="ai-panel">
+        <div style="padding: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between;">
+            <h3>AI Copilot</h3>
+            <i data-lucide="x" style="cursor: pointer;" onclick="app.toggleAI()"></i>
+        </div>
+        <div style="padding: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Magic Edit -->
+            <div class="glass-panel p-4 rounded-xl" style="padding:1rem; border-radius:8px;">
+                <div class="flex items-center gap-2 mb-2 font-bold"><i data-lucide="scissors" style="width:16px;"></i> Auto Edit</div>
+                <button class="btn btn-primary w-full" onclick="app.runAI('Auto Editing')">Run Analysis</button>
+            </div>
+            <!-- VFX -->
+            <div class="glass-panel p-4 rounded-xl" style="padding:1rem; border-radius:8px;">
+                <div class="flex items-center gap-2 mb-2 font-bold"><i data-lucide="zap" style="width:16px;"></i> VFX Studio</div>
+                <div class="flex gap-2">
+                    <button class="btn w-full" onclick="app.toggleVFX('aura')">Aura</button>
+                    <button class="btn w-full" onclick="app.toggleVFX('eyes')">Eyes</button>
+                </div>
+            </div>
+            <!-- Scene Gen -->
+            <div class="glass-panel p-4 rounded-xl" style="padding:1rem; border-radius:8px;">
+                <div class="flex items-center gap-2 mb-2 font-bold"><i data-lucide="wand-2" style="width:16px;"></i> Scene Gen</div>
+                <input type="text" id="ai-prompt" placeholder="E.g. Cyberpunk rain..." class="input-box">
+                <button class="btn w-full" onclick="app.generateScene()">Generate</button>
+            </div>
+            <!-- Image Results -->
+            <div id="ai-results" class="hidden" style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px;"></div>
+        </div>
+    </aside>
+
+    <!-- Timeline -->
+    <footer class="timeline">
+        <div style="height: 40px; border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 1rem; justify-content: space-between;">
+            <div class="flex gap-4">
+                <i data-lucide="undo" style="width:16px; color:#666;"></i>
+                <i data-lucide="redo" style="width:16px; color:#666;"></i>
+                <i data-lucide="scissors" style="width:16px; color:#666;"></i>
+            </div>
+            <div style="font-size:0.8rem; color:#666;">00:00:15:00</div>
+        </div>
+        <div style="flex:1; position: relative; padding-top: 20px;">
+            <!-- Tracks -->
+            <div class="track">
+                <div class="track-head">Video 1</div>
+                <div class="track-lane">
+                    <div class="clip" style="left: 20px; width: 150px;" onmousedown="app.dragStart(event, this)">Intro.mp4</div>
+                    <div class="clip" style="left: 180px; width: 200px;" onmousedown="app.dragStart(event, this)">Scene_1.mp4</div>
+                </div>
+            </div>
+            <div class="track">
+                <div class="track-head">Audio 1</div>
+                <div class="track-lane">
+                    <div class="clip" style="background:#10b981; left: 0px; width: 400px;" onmousedown="app.dragStart(event, this)">Music.mp3</div>
+                </div>
+            </div>
+            <div class="playhead"></div>
+        </div>
+    </footer>
+</div>
+
+<!-- FIREBASE & APP LOGIC -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signInAnonymously, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // --- 1. FIREBASE CONFIG ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBnFNm4TK1nxKQVjg9AXXkrRoqs2AAO9yQ",
+      authDomain: "ripzcreator-e.firebaseapp.com",
+      projectId: "ripzcreator-e",
+      storageBucket: "ripzcreator-e.firebasestorage.app",
+      messagingSenderId: "681432437212",
+      appId: "1:681432437212:web:e07ddb0ee8d5b53fa2ff19",
+      measurementId: "G-B74RK9PSZM"
+    };
+
+    let auth, db;
+    try {
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        console.log("Firebase initialized for RipzCreator");
+    } catch (e) {
+        console.warn("Firebase config error:", e);
+    }
+
+    // --- 2. APP LOGIC ---
+    window.app = {
+        user: null,
+        // Gemini Key (Pre-Configured)
+        geminiKey: "AIzaSyB2EusMCdsK2CeM1QefSY7PPUxl7wjd4QQ",
+
+        init() {
+            lucide.createIcons(); // Initialize Icons
+            // Check persistence
+            if (localStorage.getItem('novacut_user')) {
+                this.navTo('dashboard');
+            }
+        },
+
+        // Navigation
+        navTo(viewId) {
+            document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            
+            if (viewId === 'dashboard') {
+                localStorage.setItem('novacut_user', 'true');
+            }
+            lucide.createIcons();
+        },
+
+        // Auth
+        async handleAuth(mode) {
+            const errorEl = document.getElementById('login-error');
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            errorEl.innerText = "";
+            
+            try {
+                if (mode === 'guest') {
+                    try {
+                        if (auth) await signInAnonymously(auth);
+                        else this.mockLogin('Guest');
+                    } catch(e) {
+                        // Fallback to Offline Mode if Auth Disabled
+                        this.mockLogin('Guest (Offline)');
+                    }
+                } 
+                else if (mode === 'signin' && auth) {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                }
+                else if (mode === 'signup' && auth) {
+                    await createUserWithEmailAndPassword(auth, email, pass);
+                }
+                else if (!auth) {
+                    this.mockLogin('Offline User');
+                }
+            } catch (e) {
+                console.error(e);
+                errorEl.innerText = e.message.replace('Firebase: ', '');
+            }
+        },
+
+        mockLogin(name) {
+            this.user = { email: name };
+            this.finishLogin();
+        },
+
+        finishLogin() {
+            localStorage.setItem('novacut_user', 'true');
+            this.navTo('dashboard');
+        },
+
+        logout() {
+            if (auth) signOut(auth);
+            localStorage.removeItem('novacut_user');
+            this.user = null;
+            this.navTo('login');
+        },
+
+        createProject() {
+            const name = prompt("Project Name:", "Untitled");
+            if(name) this.openProject(name);
+        },
+
+        openProject(name) {
+            document.getElementById('project-title-display').innerText = name;
+            this.navTo('editor');
+        },
+
+        // Editor Interactions
+        toggleAI() {
+            document.getElementById('ai-panel').classList.toggle('collapsed');
+        },
+
+        runAI(task) {
+            const btn = event.target;
+            const original = btn.innerText;
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+            
+            // Simulation
+            setTimeout(() => {
+                btn.innerText = original;
+                btn.disabled = false;
+                this.toast(`${task} Completed!`);
+                
+                // Simulate adding a clip
+                if(task === 'Scene Generation') {
+                    const track = document.querySelector('.track-lane');
+                    const clip = document.createElement('div');
+                    clip.className = 'clip fx';
+                    clip.innerText = 'AI Scene';
+                    clip.style.left = '400px';
+                    clip.style.width = '100px';
+                    clip.onmousedown = (e) => app.dragStart(e, clip);
+                    track.appendChild(clip);
+                }
+            }, 1500);
+        },
+
+        toggleVFX(type) {
+            const el = document.getElementById(`vfx-${type}`);
+            if(el) {
+                const isOn = el.style.opacity === '1';
+                el.style.opacity = isOn ? '0' : '1';
+                this.showToast(isOn ? 'VFX Off' : 'VFX On');
+            }
+        },
+
+        // FREE AI Scene Generation (Pollinations)
+        generateScene() {
+            const prompt = document.getElementById('ai-prompt').value;
+            if(!prompt) return this.toast("Please enter a prompt");
+            
+            const btn = event.target;
+            btn.innerText = "Generating...";
+            
+            // Generate 2 images
+            const container = document.getElementById('ai-results');
+            container.classList.remove('hidden');
+            container.innerHTML = '';
+            
+            [1, 2].forEach(i => {
+                const seed = Math.floor(Math.random() * 1000);
+                const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}, anime style, high quality?width=300&height=200&seed=${seed}&nologo=true`;
+                const img = document.createElement('img');
+                img.src = url;
+                img.style.width = '100%';
+                img.style.borderRadius = '6px';
+                container.appendChild(img);
+            });
+            
+            setTimeout(() => btn.innerText = "Generate", 2000);
+        },
+
+        toast(msg) {
+            const t = document.getElementById('toast');
+            t.querySelector('span').innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        },
+
+        // Drag Logic
+        dragStart(e, el) {
+            let startX = e.clientX;
+            let startLeft = parseInt(el.style.left || 0);
+            const onMove = (evt) => { el.style.left = `${startLeft + evt.clientX - startX}px`; };
+            const onUp = () => { document.removeEventListener('mousemove', onMove); document.removeEventListener('mouseup', onUp); };
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onUp);
+        }
+    };
+
+    // Auto-login listener
+    if(auth) {
+        onAuthStateChanged(auth, (user) => {
+            if(user) {
+                app.user = user;
+                if(!document.getElementById('view-login').classList.contains('hidden')) {
+                    app.finishLogin();
+                }
+            }
+        });
+    }
+
+    app.init();
+</script>
+</body>
+</html>
